@@ -9,18 +9,6 @@ module.exports = function (app) {
 
 
     //  #### GETS ####
-
-    // gets the previous post, and edits it
-    app.get("/api/posts/:id", function (req, res){
-        db.Post.findOne({
-            where:{
-              id: req.params.id  
-            } 
-        }).then(function(result){
-            console.log(result)
-            res.render("posts-form", result)
-        })
-    })
     //Route for all post
     app.get("/api/posts", function (req, res) {
         db.Post.findAll({}).then(function (result) {
@@ -37,7 +25,7 @@ module.exports = function (app) {
     });
 
     // get all post with a specific category
-    app.get("/api/posts/category:category", function (req, res) {
+    app.get("/api/posts/category/ :category", function (req, res) {
         db.Post.findAll({
             where: {
 
@@ -50,34 +38,31 @@ module.exports = function (app) {
     });
 
     //  #### PUTS ####
-    //updated entry from an edited post...Don't forget to deliberate about the :id and how to protect it....
-    app.put("/api/posts/:id", function (req, res) {
+    //update entry with a specific user id// then redirects
+    app.put("/api/update/:id", function (req, res) {
         db.Post.findOne({
             where: {
-                author: req.body.author, 
-                id: req.body.id,
+                author: req.params.id
             }
         }).then(function (Post) {
             Post.updateAttributes({
-                category: req.body.category, 
-                title: req.body.title, 
-                body: req.body.body, 
+                title: "I did It!"
             })
-            res.redirect("/posts");
+            res.redirect("/")
         })
     })
 
     //  #### POSTS ####
      //creates a new entry 
-    app.post("/api/posts/new", function (req, res) {
-           db.Post.create({
-            category: req.body.category,
-            title: req.body.title,
-            body: req.body.body,
-            //Need to remind frontend to make plac for Author
+    app.post("/api/new", function (req, res) {
+        db.Post.create({
+            category: "Events",
+            title: "Got the fiyah!",
+            body: "Come one come all see all the junk that I have to sell. It will be great!",
             author: "Tiesto",
         }).then(function (result) {
-            res.redirect("/posts");
+            //make sure to add the res.redirect when done with developing
+            res.json(result);
         })
     })
 
@@ -97,16 +82,15 @@ module.exports = function (app) {
             geolocation: "34.44949494, 75.9000090",
         }).then(function(result) {
             //make sure to add the res.redirect when done with
-            res.json(result);
+            res.json(result)
         })
     })
         //  #### DELETES  ####
-    //deletes a user
+    //deletes a user /// Making sure the branches are merging well
     app.delete("/api/delete/:id", function (req, res) {
         db.Post.destroy({
             where: {
-                id: req.params.id,
-                author: req.body.author, 
+                id: req.params.id
             }
         })
         .then(function(result){
